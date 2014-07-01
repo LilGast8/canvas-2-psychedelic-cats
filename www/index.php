@@ -88,7 +88,7 @@
 <script src="<?php echo WEB_ROOT; ?>src/js/app/com/views/View.class.js"></script>
 
 <!-- Partials views -->
-<!-- <script src="<?php echo WEB_ROOT; ?>src/js/app/com/views/partials/View.FooterPartial.js"></script> -->
+<script src="<?php echo WEB_ROOT; ?>src/js/app/com/views/partials/View.Kitten.js"></script>
 
 <!-- Page views -->
 <script src="<?php echo WEB_ROOT; ?>src/js/app/com/views/pages/View.Index.js"></script>

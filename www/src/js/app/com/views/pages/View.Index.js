@@ -21,13 +21,24 @@ APP.Views.Index = (function(window){
 		this.canvas = document.getElementById('canvas');
 		this.context = this.canvas.getContext('2d');
 		
-		_initLoader.call(this);
+		this.$.canvas = $(this.canvas);
+		
+		this.urlImgs = ['img/kitten_1.jpg'];
+		this.kittens = [];
+		this.currentKitten = null;
+		
+	//	_initLoader.call(this);
+		
+		_initKittens.call(this);
 	};
 	
 	
 	Index.prototype.bindEvents = function() {
 		this.resizeWindowProxy = $.proxy(_resize, this);
 		APP.Main.$.window.on('resize', this.resizeWindowProxy);
+		
+	//	this.mouseMoveCanvasProxy = $.proxy(_moveMask, this);
+	//	this.$.canvas.on('mousemove', this.mouseMoveCanvasProxy);
 		
 		_resize.call(this);
 	};
@@ -48,36 +59,21 @@ APP.Views.Index = (function(window){
 	};
 	
 	
-	var _initLoader = function() {
-		this.loaderImg = new APP.Loader();
-		this.loaderImg.init();
+	var _initKittens = function() {
+		for(var i=0; i<this.urlImgs.length; i++) {
+			var kitten = new APP.Views.Kitten(i+1, this.urlImgs[i]);
+			kitten.init();
+			this.kittens.push(kitten);
+		}
 		
-		var urlImg = 'img/kitten_1.jpg';
+		this.currentKitten = this.kittens[0];
 		
-		this.loaderImg.buildEvt(this.loaderImg.EVENT.ENDED, _drawCanvas.bind(this, urlImg));
-		
-		this.loaderImg.initLoad(['img/kitten_1.jpg']);
+		this.currentKitten.load();
 	};
 	
 	
-	var _drawCanvas = function(urlImg) {
-		console.log(urlImg);
-		
-		var img = new Image();
-	//	imageObj.onload = function() {
-	//	context.drawImage(imageObj, x, y);
-	//	};
-		img.src = urlImg;
-		
-		this.context.drawImage(img, 0, 0);
-		
-		this.context.globalCompositeOperation = 'destination-in';
-		
-		this.context.beginPath();
-	//	this.context.arc(centerX, centerY, radius, 0, 2*Math.PI, false);
-		this.context.arc(1180, 600, 100, 0, 2*Math.PI, false);
-		this.context.fillStyle = '#0f9';
-		this.context.fill();
+	var _moveMask = function() {
+		this.currentKitten.draw();
 	};
 	
 	
