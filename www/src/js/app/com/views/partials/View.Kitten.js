@@ -16,6 +16,7 @@ APP.Views.Kitten = (function(window){
 		
 		this.x = null;
 		this.y = null;
+	//	this.radius = null;
 	}
 	
 	
@@ -42,7 +43,8 @@ APP.Views.Kitten = (function(window){
 	//	this.mouseMoveCanvasProxy = $.proxy(_moveMask, this);
 	//	this.$.canvas.on('mousemove', this.mouseMoveCanvasProxy);
 		
-		_resize.call(this);
+	//	_resize.call(this);
+		this.resize();
 	};
 	
 	
@@ -51,48 +53,91 @@ APP.Views.Kitten = (function(window){
 	};
 	
 	
+//	var _resize = function() {
+	Kitten.prototype.resize = function() {
+		APP.Main.resize();
+		
+		this.canvas.width = APP.Main.windowW;
+		this.canvas.height = APP.Main.windowH;
+	//	this.radius = this.canvas.width*this.canvas.height/15000;
+		
+	//	this.drawCanvas();
+	};
+	
+	
 	Kitten.prototype.load = function() {
 		this.loaderImg = new APP.Loader();
 		this.loaderImg.init();
 		
-		this.loaderImg.buildEvt(this.loaderImg.EVENT.ENDED, _bindMouseMouse.bind(this));
+	//	this.loaderImg.buildEvt(this.loaderImg.EVENT.ENDED, _bindMouseMouse.bind(this));
+		this.loaderImg.buildEvt(this.loaderImg.EVENT.ENDED, _kittenLoaded.bind(this));
 		
 		this.loaderImg.initLoad([this.urlImg]);
 	};
 	
 	
-//	Kitten.prototype.draw = function(e) {
-	var _draw = function(e) {
+	Kitten.prototype.draw = function(e) {
+//	var _draw = function(e) {
+		console.log(this.name);
+		
 		var img = new Image();
 		img.src = this.urlImg;
 		
 		this.context.globalCompositeOperation = 'source-over';
 		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		
-		this.context.drawImage(img, 0, 0);
+		var sizeImg = _setSizeImage(img.width, img.height, this.canvas.width, this.canvas.height);
+		this.context.drawImage(img, sizeImg.x, sizeImg.y, sizeImg.w, sizeImg.h);
 		
 		this.context.globalCompositeOperation = 'destination-in';
 		
 		this.context.beginPath();
-		this.context.arc(e.x, e.y, 100, 0, 2*Math.PI, false);
-		this.context.fillStyle = '#0f9';
+	//	this.context.arc(e.x, e.y, 75, 0, 2*Math.PI, false);
+		this.context.arc(this.x, this.y, 75, 0, 2*Math.PI, false);
+		this.context.fillStyle = '#fff';
 		this.context.fill();
+		
+		TweenLite.to(this, 1.5, {x:e.x, y:e.y, ease:Quart.easeOut});
 	};
 	
 	
-	var _resize = function() {
-		APP.Main.resize();
+	var _kittenLoaded = function() {
+		console.log('kitten loaded');
 		
-		this.canvas.width = APP.Main.windowW;
-		this.canvas.height = APP.Main.windowH;
-		
-	//	this.drawCanvas();
+		this.dispatch(this.EVENT.LOADED);
 	};
 	
 	
 	var _bindMouseMouse = function() {
-		this.mouseMoveCanvasProxy = $.proxy(_draw, this);
-		this.$.canvas.on('mousemove', this.mouseMoveCanvasProxy);
+	//	this.mouseMoveCanvasProxy = $.proxy(_draw, this);
+	//	this.$.canvas.on('mousemove', this.mouseMoveCanvasProxy);
+	};
+	
+	
+	var _setSizeImage = function(imgW, imgH, contW, contH) {
+		var imgRatio = imgW/imgH;
+		var canvasRatio = contW/contH;
+		var sizeImg = {
+			x : 0,
+			y : 0,
+			w : 0,
+			h : 0
+		};
+		
+		if(imgRatio < canvasRatio) {
+			sizeImg.w = contW;
+			sizeImg.h = sizeImg.w/imgRatio;
+			sizeImg.x = 0;
+			sizeImg.y = -(sizeImg.h-contH)/2;
+			
+		} else {
+			sizeImg.h = contH;
+			sizeImg.w = sizeImg.h*imgRatio;
+			sizeImg.x = -(sizeImg.w-contW)/2;
+			sizeImg.y = 0;
+		}
+		
+		return sizeImg;
 	};
 	
 	

@@ -23,9 +23,28 @@ APP.Views.Index = (function(window){
 		
 		this.$.canvas = $(this.canvas);
 		
-		this.urlImgs = ['img/kitten_1.jpg'];
+		this.urlImgs = [
+			'img/kitten_1.jpg',
+			'img/kitten_2.jpg',
+			'img/kitten_3.jpg',
+			'img/kitten_4.jpg',
+			'img/kitten_5.jpg',
+			'img/kitten_6.jpg',
+			'img/kitten_7.jpg',
+			'img/kitten_8.jpg',
+			'img/kitten_9.jpg',
+			'img/kitten_10.jpg'
+		];
 		this.kittens = [];
 		this.currentKitten = null;
+		this.idCurrentKitten = 0;
+		
+	//	this.mouseX = null;
+	//	this.mouseY = null;
+		this.mouse = {
+			x : null,
+			y : null
+		};
 		
 	//	_initLoader.call(this);
 		
@@ -39,6 +58,9 @@ APP.Views.Index = (function(window){
 		
 	//	this.mouseMoveCanvasProxy = $.proxy(_moveMask, this);
 	//	this.$.canvas.on('mousemove', this.mouseMoveCanvasProxy);
+		
+		this.clickCanvasProxy = $.proxy(_changeKitten, this);
+		this.$.canvas.on('click', this.clickCanvasProxy);
 		
 		_resize.call(this);
 	};
@@ -55,7 +77,7 @@ APP.Views.Index = (function(window){
 		this.canvas.width = APP.Main.windowW;
 		this.canvas.height = APP.Main.windowH;
 		
-	//	this.drawCanvas();
+		this.currentKitten.resize();
 	};
 	
 	
@@ -66,14 +88,47 @@ APP.Views.Index = (function(window){
 			this.kittens.push(kitten);
 		}
 		
-		this.currentKitten = this.kittens[0];
-		
+		this.currentKitten = this.kittens[this.idCurrentKitten];
+		this.currentKitten.buildEvt(this.currentKitten.EVENT.LOADED, _bindMouseMouse.bind(this));
 		this.currentKitten.load();
 	};
 	
 	
-	var _moveMask = function() {
-		this.currentKitten.draw();
+	var _bindMouseMouse = function() {
+		this.currentKitten.destroyEvt(this.currentKitten.EVENT.LOADED, _bindMouseMouse.bind(this));
+		
+		this.mouseMoveCanvasProxy = $.proxy(_moveMask, this);
+		this.$.canvas.on('mousemove', this.mouseMoveCanvasProxy);
+		
+	//	TweenLite.ticker.addEventListener('tick', _moveMask, this);
+	//	TweenLite.ticker.addEventListener('tick', this.moveMask, this);
+	};
+	
+	
+//	var _moveMask = function(e) {
+	Index.prototype.moveMask = function(e) {
+		this.mouse.x = e.x;
+		this.mouse.y = e.y;
+		this.currentKitten.draw(e);
+	};
+	
+	
+	var _changeKitten = function() {
+		console.log('change');
+		
+		this.idCurrentKitten = this.idCurrentKitten+1 == this.kittens.length ? 0 : this.idCurrentKitten+1;
+		var nextKitten = this.kittens[this.idCurrentKitten];
+		
+		nextKitten.buildEvt(nextKitten.EVENT.LOADED, _nextKittenLoaded.bind(this, nextKitten));
+		nextKitten.load();
+	};
+	
+	
+	var _nextKittenLoaded = function(nextKitten) {
+		nextKitten.destroyEvt(nextKitten.EVENT.LOADED, _nextKittenLoaded.bind(this, nextKitten));
+		
+		this.currentKitten = nextKitten;
+		this.currentKitten.draw(this.mouse);
 	};
 	
 	
