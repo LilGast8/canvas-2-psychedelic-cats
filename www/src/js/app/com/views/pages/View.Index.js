@@ -105,8 +105,8 @@ APP.Views.Index = (function(window){
 	};
 	
 	
-//	var _moveMask = function(e) {
-	Index.prototype.moveMask = function(e) {
+	var _moveMask = function(e) {
+//	Index.prototype.moveMask = function(e) {
 		this.mouse.x = e.x;
 		this.mouse.y = e.y;
 		this.currentKitten.draw(e);
