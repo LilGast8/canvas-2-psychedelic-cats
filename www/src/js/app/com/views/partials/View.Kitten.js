@@ -24,6 +24,11 @@ APP.Views.Kitten = (function(window){
 	Kitten.prototype.constructor = Kitten;
 	
 	
+	Kitten.prototype.init = function() {
+		this.initElt();
+	};
+	
+	
 	Kitten.prototype.initElt = function() {
 		this.$.page = $(document.getElementById('page-content'));
 		
@@ -40,16 +45,41 @@ APP.Views.Kitten = (function(window){
 	
 	
 	Kitten.prototype.bindEvents = function() {
-	//	this.mouseMoveCanvasProxy = $.proxy(_moveMask, this);
-	//	this.$.canvas.on('mousemove', this.mouseMoveCanvasProxy);
+		console.log('bind evt :', this.name);
 		
-	//	_resize.call(this);
+		TweenLite.ticker.addEventListener('tick', _draw, this);
+		
+		this.mouseMoveCanvasProxy = $.proxy(_moveMask, this);
+		this.$.canvas.on('mousemove', this.mouseMoveCanvasProxy);
+		
 		this.resize();
 	};
 	
 	
 	Kitten.prototype.unbindEvents = function() {
+		console.log('unbind evt :', this.name);
 		
+		TweenLite.ticker.removeEventListener('tick', _draw, this);
+		
+		this.$.canvas.off('mousemove', this.mouseMoveCanvasProxy);
+		this.mouseMoveCanvasProxy = null;
+	};
+	
+	
+	Kitten.prototype.destroy = function() {
+		console.log('destroy kitten :', this.name);
+		
+		this.__proto__.__proto__.destroy.call(this);
+		
+	//	console.log('this', this);
+	//	console.log('this.proto', this.__proto__);
+	//	console.log('this.proto.proto', this.__proto__.__proto__);
+		
+	//	console.log('this.prototype', this.prototype);
+	//	console.log('this.prototype.prototype', this.prototype.prototype);
+		
+	//	this.prototype.destroy();
+	//	this.__proto__.destroy.call(this);
 	};
 	
 	
@@ -76,9 +106,11 @@ APP.Views.Kitten = (function(window){
 	};
 	
 	
-	Kitten.prototype.draw = function(e) {
-//	var _draw = function(e) {
-		console.log(this.name);
+//	Kitten.prototype.draw = function(e) {
+//	Kitten.prototype.draw = function() {
+	var _draw = function() {
+	//	console.log(this);
+	//	console.log(this.name);
 		
 		var img = new Image();
 		img.src = this.urlImg;
@@ -96,21 +128,32 @@ APP.Views.Kitten = (function(window){
 		this.context.arc(this.x, this.y, 75, 0, 2*Math.PI, false);
 		this.context.fillStyle = '#fff';
 		this.context.fill();
-		
-		TweenLite.to(this, 1.5, {x:e.x, y:e.y, ease:Quart.easeOut});
 	};
 	
 	
 	var _kittenLoaded = function() {
-		console.log('kitten loaded');
+		console.log('kitten loaded :', this.name);
+		
+		this.bindEvents();
+		
+	//	_bindMouseMouse.call(this);
 		
 		this.dispatch(this.EVENT.LOADED);
 	};
 	
 	
 	var _bindMouseMouse = function() {
-	//	this.mouseMoveCanvasProxy = $.proxy(_draw, this);
+		console.log('bind mouse move :', this.name);
+		
+	//	this.mouseMoveCanvasProxy = $.proxy(_moveMask, this);
 	//	this.$.canvas.on('mousemove', this.mouseMoveCanvasProxy);
+	};
+	
+	
+	var _moveMask = function(e) {
+		console.log('move mask :', this.name);
+		
+		TweenLite.to(this, 1.5, {x:e.x, y:e.y, ease:Quad.easeOut});
 	};
 	
 	

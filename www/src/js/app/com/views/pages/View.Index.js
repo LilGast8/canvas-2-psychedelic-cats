@@ -48,6 +48,7 @@ APP.Views.Index = (function(window){
 		
 	//	_initLoader.call(this);
 		
+		_resize.call(this);
 		_initKittens.call(this);
 	};
 	
@@ -61,8 +62,6 @@ APP.Views.Index = (function(window){
 		
 		this.clickCanvasProxy = $.proxy(_changeKitten, this);
 		this.$.canvas.on('click', this.clickCanvasProxy);
-		
-		_resize.call(this);
 	};
 	
 	
@@ -77,7 +76,7 @@ APP.Views.Index = (function(window){
 		this.canvas.width = APP.Main.windowW;
 		this.canvas.height = APP.Main.windowH;
 		
-		this.currentKitten.resize();
+		if(this.currentKitten) this.currentKitten.resize();
 	};
 	
 	
@@ -89,28 +88,35 @@ APP.Views.Index = (function(window){
 		}
 		
 		this.currentKitten = this.kittens[this.idCurrentKitten];
-		this.currentKitten.buildEvt(this.currentKitten.EVENT.LOADED, _bindMouseMouse.bind(this));
+		this.currentKitten.buildEvt(this.currentKitten.EVENT.LOADED, _initFirstKitten.bind(this));
+		
+	//	this.currentKitten.init();
 		this.currentKitten.load();
 	};
 	
 	
-	var _bindMouseMouse = function() {
-		this.currentKitten.destroyEvt(this.currentKitten.EVENT.LOADED, _bindMouseMouse.bind(this));
+	var _initFirstKitten = function() {
+		console.log('init first kitten');
 		
-		this.mouseMoveCanvasProxy = $.proxy(_moveMask, this);
-		this.$.canvas.on('mousemove', this.mouseMoveCanvasProxy);
+	//	this.currentKitten.destroyEvt(this.currentKitten.EVENT.LOADED, _bindMouseMouse.bind(this));
+		
+	//	this.mouseMoveCanvasProxy = $.proxy(_moveMask, this);
+	//	this.$.canvas.on('mousemove', this.mouseMoveCanvasProxy);
 		
 	//	TweenLite.ticker.addEventListener('tick', _moveMask, this);
-	//	TweenLite.ticker.addEventListener('tick', this.moveMask, this);
+		
+	//	TweenLite.ticker.addEventListener('tick', this.currentKitten.draw, this.currentKitten);
 	};
 	
 	
+	/*
 	var _moveMask = function(e) {
 //	Index.prototype.moveMask = function(e) {
 		this.mouse.x = e.x;
 		this.mouse.y = e.y;
 		this.currentKitten.draw(e);
 	};
+	*/
 	
 	
 	var _changeKitten = function() {
@@ -120,15 +126,24 @@ APP.Views.Index = (function(window){
 		var nextKitten = this.kittens[this.idCurrentKitten];
 		
 		nextKitten.buildEvt(nextKitten.EVENT.LOADED, _nextKittenLoaded.bind(this, nextKitten));
+	//	nextKitten.init();
 		nextKitten.load();
 	};
 	
 	
 	var _nextKittenLoaded = function(nextKitten) {
+		console.log('next kitten loaded');
+		
 		nextKitten.destroyEvt(nextKitten.EVENT.LOADED, _nextKittenLoaded.bind(this, nextKitten));
 		
+	//	this.currentKitten.unbindEvents();
+		this.currentKitten.destroy();
+		
 		this.currentKitten = nextKitten;
-		this.currentKitten.draw(this.mouse);
+	//	this.currentKitten.init();
+	//	this.currentKitten.draw(this.mouse);
+		
+		this.currentKitten.bindEvents();
 	};
 	
 	

@@ -51,6 +51,8 @@ APP.View = (function(window) {
 	
 	
 	View.prototype.destroy = function() {
+		console.log('destroy view :', this.name);
+		
 		this.unbindEvents();
 		
 		this.killTweens();
