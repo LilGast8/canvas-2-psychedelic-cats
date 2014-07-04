@@ -46,7 +46,7 @@ APP.Main = (function(window) {
 		APP.Config.init();
 		APP.Views.Index.init();
 		
-		_bindEvents.call(this);
+	//	_bindEvents.call(this);
 	};
 	
 	
