@@ -39,16 +39,16 @@ APP.Views.Index = (function(window){
 		this.currentKitten = null;
 		this.idCurrentKitten = 0;
 		
-	//	this.mouseX = null;
-	//	this.mouseY = null;
+		_resize.call(this);
+		
 		this.mouse = {
-			x : null,
-			y : null
+			x : this.canvas.width/2,
+			y : this.canvas.height/2
 		};
 		
 	//	_initLoader.call(this);
 		
-		_resize.call(this);
+		
 		_initKittens.call(this);
 	};
 	
@@ -70,6 +70,14 @@ APP.Views.Index = (function(window){
 	};
 	
 	
+	Index.prototype.setMousePos = function(x, y) {
+		this.mouse.x = x;
+		this.mouse.y = y;
+		
+		console.log(this.currentKitten.name, this.mouse.x, this.mouse.y);
+	};
+	
+	
 	var _resize = function() {
 		APP.Main.resize();
 		
@@ -83,20 +91,22 @@ APP.Views.Index = (function(window){
 	var _initKittens = function() {
 		for(var i=0; i<this.urlImgs.length; i++) {
 			var kitten = new APP.Views.Kitten(i+1, this.urlImgs[i]);
-			kitten.init();
+		//	kitten.init();
 			this.kittens.push(kitten);
 		}
 		
 		this.currentKitten = this.kittens[this.idCurrentKitten];
 		this.currentKitten.buildEvt(this.currentKitten.EVENT.LOADED, _initFirstKitten.bind(this));
 		
-	//	this.currentKitten.init();
+		this.currentKitten.init();
 		this.currentKitten.load();
 	};
 	
 	
 	var _initFirstKitten = function() {
 		console.log('init first kitten');
+		
+		this.currentKitten.destroyEvt(this.currentKitten.EVENT.LOADED, _initFirstKitten.bind(this));
 		
 	//	this.currentKitten.destroyEvt(this.currentKitten.EVENT.LOADED, _bindMouseMouse.bind(this));
 		
@@ -126,7 +136,7 @@ APP.Views.Index = (function(window){
 		var nextKitten = this.kittens[this.idCurrentKitten];
 		
 		nextKitten.buildEvt(nextKitten.EVENT.LOADED, _nextKittenLoaded.bind(this, nextKitten));
-	//	nextKitten.init();
+		nextKitten.init();
 		nextKitten.load();
 	};
 	
@@ -137,13 +147,16 @@ APP.Views.Index = (function(window){
 		nextKitten.destroyEvt(nextKitten.EVENT.LOADED, _nextKittenLoaded.bind(this, nextKitten));
 		
 	//	this.currentKitten.unbindEvents();
+		
 		this.currentKitten.destroy();
+	//	this.currentKitten.destroy.call(this.currentKitten);
 		
 		this.currentKitten = nextKitten;
-	//	this.currentKitten.init();
+	//	this.currentKitten.init(this.mouse.x, this.mouse.y);
+		
 	//	this.currentKitten.draw(this.mouse);
 		
-		this.currentKitten.bindEvents();
+	//	this.currentKitten.bindEvents();
 	};
 	
 	

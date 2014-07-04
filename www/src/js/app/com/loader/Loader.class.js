@@ -1,5 +1,8 @@
 
 
+APP.Loader = APP.Loader || {};
+
+
 APP.Loader = (function(window) {
 	
 	

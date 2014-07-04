@@ -1,9 +1,9 @@
 
 
-APP.Main = {};
+APP.Main = APP.Main || {};
 
 
-(function(window) {
+APP.Main = (function(window) {
 	
 	
 	function Main() {
@@ -14,25 +14,21 @@ APP.Main = {};
 	}
 	
 	
-	Main.prototype = {
+	Main.prototype.onReady = function() {
+		this.$.window = $(window);
+		this.$.body = $(document.body);
+		this.$.mainContainer = $(document.getElementById('main-container'));
+		this.$.pageContainer = $(document.getElementById('page-container'));
+		this.$.loader = $(document.getElementById('loader'));
 		
-		onReady : function() {
-			this.$.window = $(window);
-			this.$.body = $(document.body);
-			this.$.mainContainer = $(document.getElementById('main-container'));
-			this.$.pageContainer = $(document.getElementById('page-container'));
-			this.$.loader = $(document.getElementById('loader'));
-			
-			this.windowLoadProxy = $.proxy(_windowLoad, this);
-			this.$.window.on('load', this.windowLoadProxy);
-		},
-		
-		
-		resize : function() {
-			this.windowW = this.$.window.width();
-			this.windowH = this.$.window.height();
-		}
-		
+		this.windowLoadProxy = $.proxy(_windowLoad, this);
+		this.$.window.on('load', this.windowLoadProxy);
+	};
+	
+	
+	Main.prototype.resize = function() {
+		this.windowW = this.$.window.width();
+		this.windowH = this.$.window.height();
 	};
 	
 	
@@ -59,7 +55,7 @@ APP.Main = {};
 	};
 	
 	
-	APP.Main = new Main();
+	return new Main();
 	
 	
 })(window);

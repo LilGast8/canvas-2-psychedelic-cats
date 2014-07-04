@@ -11,11 +11,14 @@ APP.Views.Kitten = (function(window){
 		
 		this.name = 'kitten-'+id;
 		
-		this.loaderImg = null;
+	//	this.loaderImg = null;
 		this.urlImg = urlImg;
 		
-		this.x = null;
-		this.y = null;
+	//	this.canvas = null;
+	//	this.context = null;
+		
+	//	this.x = null;
+	//	this.y = null;
 	//	this.radius = null;
 	}
 	
@@ -30,7 +33,10 @@ APP.Views.Kitten = (function(window){
 	
 	
 	Kitten.prototype.initElt = function() {
-		this.$.page = $(document.getElementById('page-content'));
+		console.log('init elt :', this.name);
+		
+		this.loaderImg = new APP.Loader();
+		this.loaderImg.buildEvt(this.loaderImg.EVENT.ENDED, _kittenLoaded.bind(this));
 		
 		this.canvas = APP.Views.Index.canvas;
 		this.context = APP.Views.Index.context;
@@ -68,18 +74,20 @@ APP.Views.Kitten = (function(window){
 	
 	Kitten.prototype.destroy = function() {
 		console.log('destroy kitten :', this.name);
+	//	console.log(this);
 		
-		this.__proto__.__proto__.destroy.call(this);
+		this.unbindEvents();
 		
-	//	console.log('this', this);
-	//	console.log('this.proto', this.__proto__);
-	//	console.log('this.proto.proto', this.__proto__.__proto__);
+		this.loaderImg.destroyEvt(this.loaderImg.EVENT.ENDED, _kittenLoaded.bind(this));
+		this.loaderImg = null;
 		
-	//	console.log('this.prototype', this.prototype);
-	//	console.log('this.prototype.prototype', this.prototype.prototype);
+		this.canvas = null;
+		this.context = null;
 		
-	//	this.prototype.destroy();
-	//	this.__proto__.destroy.call(this);
+		this.$ = null;
+		
+		this.x = null;
+		this.y = null;
 	};
 	
 	
@@ -96,11 +104,11 @@ APP.Views.Kitten = (function(window){
 	
 	
 	Kitten.prototype.load = function() {
-		this.loaderImg = new APP.Loader();
+	//	this.loaderImg = new APP.Loader();
 		this.loaderImg.init();
 		
 	//	this.loaderImg.buildEvt(this.loaderImg.EVENT.ENDED, _bindMouseMouse.bind(this));
-		this.loaderImg.buildEvt(this.loaderImg.EVENT.ENDED, _kittenLoaded.bind(this));
+	//	this.loaderImg.buildEvt(this.loaderImg.EVENT.ENDED, _kittenLoaded.bind(this));
 		
 		this.loaderImg.initLoad([this.urlImg]);
 	};
@@ -110,7 +118,9 @@ APP.Views.Kitten = (function(window){
 //	Kitten.prototype.draw = function() {
 	var _draw = function() {
 	//	console.log(this);
-	//	console.log(this.name);
+	//	console.log('draw', this.name);
+		
+		APP.Views.Index.setMousePos(this.x, this.y);
 		
 		var img = new Image();
 		img.src = this.urlImg;
@@ -134,11 +144,13 @@ APP.Views.Kitten = (function(window){
 	var _kittenLoaded = function() {
 		console.log('kitten loaded :', this.name);
 		
-		this.bindEvents();
+	//	this.bindEvents();
 		
 	//	_bindMouseMouse.call(this);
 		
 		this.dispatch(this.EVENT.LOADED);
+		
+		this.bindEvents();
 	};
 	
 	
