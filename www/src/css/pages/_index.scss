@@ -6,8 +6,18 @@
 /***************************/
 
 
-#index { 
-	
+.index { 
+	.canvas { 
+		position:absolute; 
+		left:0; 
+		top:0; 
+	}
+}
+
+#canvas { z-index:1; }
+#tempCanvas { 
+	display:none; 
+//	opacity:0.1; 
 }
 
 

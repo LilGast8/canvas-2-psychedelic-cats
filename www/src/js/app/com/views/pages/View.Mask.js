@@ -3,10 +3,10 @@
 APP.Views = APP.Views || {};
 
 
-APP.Views.Index = (function(window){
+APP.Views.Mask = (function(window){
 	
 	
-	function Index() {
+	function Mask() {
 		APP.View.call(this);
 		
 		this.urlImgs = [
@@ -25,39 +25,52 @@ APP.Views.Index = (function(window){
 		this.currentKitten = null;
 		this.idCurrentKitten = 0;
 		
+		this.colorize = false;
+		
+		this.RADIUS_MIN = 75;
+		this.RADIUS_MAX = 350;
+		this.SPEED_ENLARGE = 5;
+		this.SPEED_REDUCE = 15;
+		
 		this.isChange = false;
 	}
 	
 	
-	Index.prototype = Object.create(APP.View.prototype);
-	Index.prototype.constructor = Index;
+	Mask.prototype = Object.create(APP.View.prototype);
+	Mask.prototype.constructor = Mask;
 	
 	
-	Index.prototype.init = function() {
+	Mask.prototype.init = function() {
 		this.initElt();
 	};
 	
 	
-	Index.prototype.initElt = function() {
+	Mask.prototype.initElt = function() {
 		this.$.page = $(document.getElementById('page-content'));
 		
 		this.canvas = document.getElementById('canvas');
 		this.context = this.canvas.getContext('2d');
+		this.tempCanvas = document.getElementById('tempCanvas');
+		this.tempContext = this.tempCanvas.getContext('2d');
 		
 		this.$.canvas = $(this.canvas);
 		
 		_resize.call(this);
 		
-		this.mouse = {
+		this.prop = {
 			x : this.canvas.width/2,
-			y : this.canvas.height/2
+			y : this.canvas.height/2,
+			r : this.RADIUS_MIN
 		};
+		
+		this.isEnlarge = false;
+		this.nbFrameSinceMouseDown = 0;
 		
 		_initKittens.call(this);
 	};
 	
 	
-	Index.prototype.bindEvents = function() {
+	Mask.prototype.bindEvents = function() {
 		this.resizeWindowProxy = $.proxy(_resize, this);
 		APP.Main.$.window.on('resize', this.resizeWindowProxy);
 		
@@ -66,24 +79,30 @@ APP.Views.Index = (function(window){
 		
 		this.clickCanvasProxy = $.proxy(_changeKitten, this);
 		this.$.canvas.on('click', this.clickCanvasProxy);
+		
+		this.clickCanvasProxy = $.proxy(_enlargeRadius, this);
+		this.$.canvas.on('mousedown', this.clickCanvasProxy);
+		
+		this.clickCanvasProxy = $.proxy(_reduceRadius, this);
+		this.$.canvas.on('mouseup', this.clickCanvasProxy);
 	};
 	
 	
-	Index.prototype.unbindEvents = function() {
+	Mask.prototype.unbindEvents = function() {
 		
 	};
 	
 	
-	Index.prototype.getMousePos = function() {
-		return this.mouse;
+	Mask.prototype.getProp = function() {
+		return this.prop;
 	};
 	
 	
 	var _resize = function() {
 		APP.Main.resize();
 		
-		this.canvas.width = APP.Main.windowW;
-		this.canvas.height = APP.Main.windowH;
+		this.canvas.width = this.tempCanvas.width = APP.Main.windowW;
+		this.canvas.height = this.tempCanvas.height = APP.Main.windowH;
 	};
 	
 	
@@ -102,8 +121,6 @@ APP.Views.Index = (function(window){
 	
 	
 	var _initFirstKitten = function() {
-		console.log('init first kitten');
-		
 		this.currentKitten.destroyEvt(this.currentKitten.EVENT.LOADED, _initFirstKitten.bind(this));
 		
 		this.bindEvents();
@@ -113,23 +130,51 @@ APP.Views.Index = (function(window){
 	
 	
 	var _draw = function() {
-		this.currentKitten.draw();
+		APP.Main.stats.begin();
+		
+		_manageRadius.call(this);
+		
+		this.currentKitten.draw(this.prop.x, this.prop.y, this.prop.r, this.colorize);
+		
+		APP.Main.stats.end();
 	};
 	
 	
 	var _moveMask = function(e) {
-		TweenLite.to(this.mouse, 1.5, {x:e.x, y:e.y, ease:Quad.easeOut});
+		TweenLite.to(this.prop, 1.5, {x:e.x, y:e.y, ease:Quad.easeOut});
+	};
+	
+	
+	var _enlargeRadius = function() {
+		this.isEnlarge = true;
+	};
+	
+	
+	var _reduceRadius = function() {
+		this.isEnlarge = false;
+	};
+	
+	
+	var _manageRadius = function() {
+		if(this.isEnlarge && this.prop.r == this.RADIUS_MAX) this.colorize = true;
+		else if(this.isEnlarge) {
+			this.colorize = true;
+			this.nbFrameSinceMouseDown++;
+			this.prop.r = this.prop.r+this.SPEED_ENLARGE < this.RADIUS_MAX ? this.prop.r+this.SPEED_ENLARGE : this.RADIUS_MAX;
+		}
+		else if(this.prop.r > this.RADIUS_MIN) {
+			this.colorize = false;
+			this.nbFrameSinceMouseDown = 0;
+			this.prop.r = this.prop.r-this.SPEED_REDUCE < this.RADIUS_MIN ? this.RADIUS_MIN : this.prop.r-this.SPEED_REDUCE;
+		}
 	};
 	
 	
 	var _changeKitten = function() {
-		console.log('change');
+		if(this.nbFrameSinceMouseDown > 8) return false;
 		
-	//	if(this.isChange) {
-	//		console.log('STOP', this.isChange);
-	//		return false;
-	//	}
-	//	else this.isChange = true;
+		if(this.isChange) return false;
+		else this.isChange = true;
 		
 		this.idCurrentKitten = this.idCurrentKitten+1 == this.kittens.length ? 0 : this.idCurrentKitten+1;
 		var nextKitten = this.kittens[this.idCurrentKitten];
@@ -141,17 +186,17 @@ APP.Views.Index = (function(window){
 	
 	
 	var _nextKittenLoaded = function(nextKitten) {
-		console.log('next kitten loaded');
-		
 		nextKitten.destroyEvt(nextKitten.EVENT.LOADED, _nextKittenLoaded.bind(this, nextKitten));
 		
 		this.currentKitten.destroy();
 		
 		this.currentKitten = nextKitten;
+		
+		this.isChange = false;
 	};
 	
 	
-	return new Index();
+	return new Mask();
 	
 	
 })(window);

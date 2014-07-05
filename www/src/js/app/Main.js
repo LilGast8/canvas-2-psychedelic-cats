@@ -43,8 +43,10 @@ APP.Main = (function(window) {
 	
 	
 	var _init = function() {
+		_initStats.call(this);
+		
 		APP.Config.init();
-		APP.Views.Index.init();
+		APP.Views.Mask.init();
 		
 	//	_bindEvents.call(this);
 	};
@@ -52,6 +54,19 @@ APP.Main = (function(window) {
 	
 	var _bindEvents = function() {
 		
+	};
+	
+	
+	var _initStats = function() {
+		this.stats = new Stats();
+		this.stats.setMode(0);
+		
+		this.stats.domElement.style.position = 'absolute';
+		this.stats.domElement.style.right = '0px';
+		this.stats.domElement.style.bottom = '0px';
+		this.stats.domElement.style.zIndex = 88;
+		
+		document.body.appendChild(this.stats.domElement);
 	};
 	
 	

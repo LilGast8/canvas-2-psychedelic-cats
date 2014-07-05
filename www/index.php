@@ -48,7 +48,8 @@
 		
 		<section id="page-content" class="index">
 			
-			<canvas id="canvas"></canvas>
+			<canvas id="canvas" class="canvas"></canvas>
+			<canvas id="tempCanvas" class="canvas"></canvas>
 			
 		</section>
 		
@@ -71,6 +72,7 @@
 <script src="<?php echo WEB_ROOT; ?>src/js/lib/greensock/TweenMax.min.js"></script>
 <script src="<?php echo WEB_ROOT; ?>src/js/lib/preloadjs-0.4.1.min.js"></script>
 <script src="<?php echo WEB_ROOT; ?>src/js/lib/signals-1.0.0.min.js"></script>
+<script src="<?php echo WEB_ROOT; ?>src/js/lib/stats.min.js"></script>
 
 <!-- Init -->
 <script src="<?php echo WEB_ROOT; ?>src/js/app/InitApp.js"></script>
@@ -91,7 +93,7 @@
 <script src="<?php echo WEB_ROOT; ?>src/js/app/com/views/partials/View.Kitten.js"></script>
 
 <!-- Page views -->
-<script src="<?php echo WEB_ROOT; ?>src/js/app/com/views/pages/View.Index.js"></script>
+<script src="<?php echo WEB_ROOT; ?>src/js/app/com/views/pages/View.Mask.js"></script>
 
 <!-- Main -->
 <script src="<?php echo WEB_ROOT; ?>src/js/app/Main.js"></script>
