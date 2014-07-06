@@ -37,6 +37,7 @@ APP.Views.Kitten = (function(window){
 		
 		this.img = null;
 		this.imgData = null;
+		this.colorV = {};
 		
 		this.counterColorization = 0;
 	};
@@ -53,8 +54,14 @@ APP.Views.Kitten = (function(window){
 		
 		this.img = null;
 		this.imgData = null;
+		this.colorV = {};
 		
 		this.counterColorization = null;
+	};
+	
+	
+	Kitten.prototype.resize = function() {
+		_drawTempImg.call(this);
 	};
 	
 	
@@ -72,14 +79,10 @@ APP.Views.Kitten = (function(window){
 		
 		if(!colorize) this.context.drawImage(this.img, sizeImg.x, sizeImg.y, sizeImg.w, sizeImg.h);
 		else {
-			if(this.counterColorization === 0) {
-				this.tempContext.drawImage(this.img, sizeImg.x, sizeImg.y, sizeImg.w, sizeImg.h);
-				this.imgData = this.tempContext.getImageData(0, 0, this.canvas.width, this.canvas.height);
-				_colorize.call(this, true);
-			} else {
-				this.imgData = this.tempContext.getImageData(0, 0, this.canvas.width, this.canvas.height);
-				_colorize.call(this, false);
-			}
+			this.imgData = this.tempContext.getImageData(0, 0, this.canvas.width, this.canvas.height);
+			
+			var newColor = this.counterColorization === 0 ? true : false;
+			_colorize.call(this, newColor);
 			
 			this.counterColorization = this.counterColorization == this.SPEED_COLORIZATION ? this.counterColorization = 0 : this.counterColorization+1;
 		}
@@ -103,6 +106,14 @@ APP.Views.Kitten = (function(window){
 	var _initImg = function() {
 		this.img = new Image();
 		this.img.src = this.urlImg;
+		
+		_drawTempImg.call(this);
+	};
+	
+	
+	var _drawTempImg = function() {
+		var sizeImg = _setSizeImage(this.img.width, this.img.height, this.canvas.width, this.canvas.height);
+		this.tempContext.drawImage(this.img, sizeImg.x, sizeImg.y, sizeImg.w, sizeImg.h);
 	};
 	
 	
@@ -133,37 +144,41 @@ APP.Views.Kitten = (function(window){
 	};
 	
 	
-	var _colorize = function(generateColor) {
+	var _colorize = function(generateNewColor) {
 		var newImgData = this.imgData;
+		var datas = this.imgData.data;
 		
-		if(generateColor) {
-			var datas = this.imgData.data;
-			
+		if(generateNewColor) {
 			var vR = Math.random();
 			var vG = Math.random();
 			var vB = Math.random();
 			
-			for(var i=0; i<datas.length; i+=4) {
-				var r = datas[i];
-				var g = datas[i+1];
-				var b = datas[i+2];
-				
-			//	datas[i] = r*Math.random();
-			//	datas[i+1] = g*Math.random();
-			//	datas[i+2] = b*Math.random();
-				
-				datas[i] = r*vR;
-				datas[i+1] = g*vG;
-				datas[i+2] = b*vB;
-				
-			//	datas[i] = r*1;
-			//	datas[i+1] = g*0;
-			//	datas[i+2] = b*0.5;
-			}
-			
-			this.tempContext.putImageData(newImgData, 0, 0);
+			this.colorV = {
+				r : vR,
+				g : vG,
+				b : vB
+			};
 		}
-		else this.context.putImageData(newImgData, 0, 0);
+		
+		for(var i=0; i<datas.length; i+=4) {
+			var r = datas[i];
+			var g = datas[i+1];
+			var b = datas[i+2];
+			
+		//	datas[i] = r*Math.random();
+		//	datas[i+1] = g*Math.random();
+		//	datas[i+2] = b*Math.random();
+			
+			datas[i] = r*this.colorV.r;
+			datas[i+1] = g*this.colorV.g;
+			datas[i+2] = b*this.colorV.b;
+			
+		//	datas[i] = r*1;
+		//	datas[i+1] = g*0;
+		//	datas[i+2] = b*0.5;
+		}
+		
+		this.context.putImageData(newImgData, 0, 0);
 	};
 	
 	

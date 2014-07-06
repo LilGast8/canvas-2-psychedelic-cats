@@ -32,6 +32,8 @@ APP.Views.Mask = (function(window){
 		this.SPEED_ENLARGE = 5;
 		this.SPEED_REDUCE = 15;
 		
+		this.isEnlarge = false;
+		this.nbFrameSinceMouseDown = 0;
 		this.isChange = false;
 	}
 	
@@ -63,9 +65,6 @@ APP.Views.Mask = (function(window){
 			r : this.RADIUS_MIN
 		};
 		
-		this.isEnlarge = false;
-		this.nbFrameSinceMouseDown = 0;
-		
 		_initKittens.call(this);
 	};
 	
@@ -88,21 +87,13 @@ APP.Views.Mask = (function(window){
 	};
 	
 	
-	Mask.prototype.unbindEvents = function() {
-		
-	};
-	
-	
-	Mask.prototype.getProp = function() {
-		return this.prop;
-	};
-	
-	
 	var _resize = function() {
 		APP.Main.resize();
 		
 		this.canvas.width = this.tempCanvas.width = APP.Main.windowW;
 		this.canvas.height = this.tempCanvas.height = APP.Main.windowH;
+		
+		if(this.currentKitten) this.currentKitten.resize();
 	};
 	
 	
