@@ -6,6 +6,8 @@ APP.Main = (function(window) {
 	function Main() {
 		this.$ = {};
 		
+		this.stats = null;
+		
 		this.windowW = null;
 		this.windowH = null;
 	}
@@ -64,6 +66,8 @@ APP.Main = (function(window) {
 		this.stats.domElement.style.zIndex = 88;
 		
 		document.body.appendChild(this.stats.domElement);
+		
+		
 	};
 	
 	
