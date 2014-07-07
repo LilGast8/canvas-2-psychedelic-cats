@@ -79,11 +79,11 @@ APP.Views.Mask = (function(window){
 		this.clickCanvasProxy = $.proxy(_changeKitten, this);
 		this.$.canvas.on('click', this.clickCanvasProxy);
 		
-		this.clickCanvasProxy = $.proxy(_enlargeRadius, this);
-		this.$.canvas.on('mousedown', this.clickCanvasProxy);
+		this.mouseDownCanvasProxy = $.proxy(_enlargeRadius, this);
+		this.$.canvas.on('mousedown', this.mouseDownCanvasProxy);
 		
-		this.clickCanvasProxy = $.proxy(_reduceRadius, this);
-		this.$.canvas.on('mouseup', this.clickCanvasProxy);
+		this.mouseUpCanvasProxy = $.proxy(_reduceRadius, this);
+		this.$.canvas.on('mouseup', this.mouseUpCanvasProxy);
 	};
 	
 	

@@ -1,8 +1,5 @@
 
 
-APP.Main = APP.Main || {};
-
-
 APP.Main = (function(window) {
 	
 	
