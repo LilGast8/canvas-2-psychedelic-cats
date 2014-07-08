@@ -132,7 +132,7 @@ APP.Views.Mask = (function(window){
 	
 	
 	var _moveMask = function(e) {
-		TweenLite.to(this.prop, 1.5, {x:e.x, y:e.y, ease:Quad.easeOut});
+		TweenLite.to(this.prop, 1.5, {x:e.clientX, y:e.clientY, ease:Quad.easeOut});
 	};
 	
 	
