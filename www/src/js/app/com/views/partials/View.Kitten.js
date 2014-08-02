@@ -77,7 +77,8 @@ APP.Views.Kitten = (function(window){
 		
 		var sizeImg = _setSizeImage(this.img.width, this.img.height, this.canvas.width, this.canvas.height);
 		
-		if(!colorize) this.context.drawImage(this.img, sizeImg.x, sizeImg.y, sizeImg.w, sizeImg.h);
+	//	if(!colorize) this.context.drawImage(this.img, sizeImg.x, sizeImg.y, sizeImg.w, sizeImg.h);
+		if(!colorize) this.context.drawImage(this.img, 0, 0, this.img.width, this.img.height, sizeImg.x, sizeImg.y, sizeImg.w, sizeImg.h);
 		else {
 			this.imgData = this.tempContext.getImageData(0, 0, this.canvas.width, this.canvas.height);
 			
@@ -113,7 +114,8 @@ APP.Views.Kitten = (function(window){
 	
 	var _drawTempImg = function() {
 		var sizeImg = _setSizeImage(this.img.width, this.img.height, this.canvas.width, this.canvas.height);
-		this.tempContext.drawImage(this.img, sizeImg.x, sizeImg.y, sizeImg.w, sizeImg.h);
+	//	this.tempContext.drawImage(this.img, sizeImg.x, sizeImg.y, sizeImg.w, sizeImg.h);
+		this.tempContext.drawImage(this.img, 0, 0, this.img.width, this.img.height, sizeImg.x, sizeImg.y, sizeImg.w, sizeImg.h);
 	};
 	
 	
