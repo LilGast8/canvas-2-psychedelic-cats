@@ -75,7 +75,7 @@ APP.Views.Kitten = (function(window){
 		this.context.globalCompositeOperation = 'source-over';
 		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		
-		var sizeImg = _setSizeImage(this.img.width, this.img.height, this.canvas.width, this.canvas.height);
+		var sizeImg = _setImageSize(this.img.width, this.img.height, this.canvas.width, this.canvas.height);
 		
 	//	if(!colorize) this.context.drawImage(this.img, sizeImg.x, sizeImg.y, sizeImg.w, sizeImg.h);
 		if(!colorize) this.context.drawImage(this.img, 0, 0, this.img.width, this.img.height, sizeImg.x, sizeImg.y, sizeImg.w, sizeImg.h);
@@ -113,13 +113,13 @@ APP.Views.Kitten = (function(window){
 	
 	
 	var _drawTempImg = function() {
-		var sizeImg = _setSizeImage(this.img.width, this.img.height, this.canvas.width, this.canvas.height);
+		var sizeImg = _setImageSize(this.img.width, this.img.height, this.canvas.width, this.canvas.height);
 	//	this.tempContext.drawImage(this.img, sizeImg.x, sizeImg.y, sizeImg.w, sizeImg.h);
 		this.tempContext.drawImage(this.img, 0, 0, this.img.width, this.img.height, sizeImg.x, sizeImg.y, sizeImg.w, sizeImg.h);
 	};
 	
 	
-	var _setSizeImage = function(imgW, imgH, contW, contH) {
+	var _setImageSize = function(imgW, imgH, contW, contH) {
 		var imgRatio = imgW/imgH;
 		var canvasRatio = contW/contH;
 		var sizeImg = {
